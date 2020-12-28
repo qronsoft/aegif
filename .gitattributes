@@ -1,0 +1,2 @@
+*.r linguist-language=C++
+3rd/* linguist-vendored

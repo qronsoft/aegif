@@ -1,0 +1,21 @@
+root = true
+
+[*]
+end_of_line = lf
+indent_size = 4
+insert_final_newline = true
+indent_style = space
+trim_trailing_whitespace = true
+charset = utf-8
+
+[*.{h,hpp,c,cpp,r}]
+charset = utf-8-bom
+
+[*.{md,yml}]
+indent_size = 2
+
+[Makefile]
+indent_style = tab
+
+[*.md]
+trim_trailing_whitespace = false
