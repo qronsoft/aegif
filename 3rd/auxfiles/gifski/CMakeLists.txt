@@ -1,32 +1,33 @@
 set(GIFSKI_ROOT_DIR ${PROJECT_SOURCE_DIR}/3rd/gifski)
-set(GIFSKI_RELEASE ${GIFSKI_ROOT_DIR}/target/release/gifski.lib)
-set(GIFSKI_DEBUG ${GIFSKI_ROOT_DIR}/target/debug/gifski.lib)
+set(GIFSKI_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/target)
+set(GIFSKI_RELEASE ${GIFSKI_BUILD_DIR}/release/gifski.lib)
+set(GIFSKI_DEBUG ${GIFSKI_BUILD_DIR}/debug/gifski.lib)
 
 add_custom_command(
     OUTPUT ${GIFSKI_RELEASE} ${GIFSKI_DEBUG}
-    COMMAND cargo build --release -q
-    COMMAND cargo build -q
+    COMMAND cargo build --release -q --target-dir ${GIFSKI_BUILD_DIR}
+    COMMAND cargo build -q --target-dir ${GIFSKI_BUILD_DIR}
     WORKING_DIRECTORY ${GIFSKI_ROOT_DIR}
 )
 
-add_custom_target(build_gifski
+add_custom_target(gifski
 DEPENDS
     ${GIFSKI_RELEASE}
     ${GIFSKI_DEBUG}
 )
 
-add_library(gifski STATIC IMPORTED GLOBAL)
-set_target_properties(gifski
+add_library(libgifski STATIC IMPORTED GLOBAL)
+set_target_properties(libgifski
 PROPERTIES
     IMPORTED_LOCATION ${GIFSKI_RELEASE}
     IMPORTED_LOCATION_DEBUG ${GIFSKI_DEBUG}
 )
-target_include_directories(gifski INTERFACE ${GIFSKI_ROOT_DIR})
+target_include_directories(libgifski INTERFACE ${GIFSKI_ROOT_DIR})
 
-target_link_libraries(gifski
+target_link_libraries(libgifski
 INTERFACE
     Userenv
     Ws2_32
 )
 
-add_dependencies(gifski build_gifski)
+add_dependencies(libgifski gifski)

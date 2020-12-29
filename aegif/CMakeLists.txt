@@ -33,7 +33,7 @@ target_link_libraries(aegif
 PRIVATE
     $<$<CONFIG:Debug>:spdlog>
     $<$<CONFIG:RelWithDebInfo>:spdlog>
-    gifski
+    libgifski
     AfterEffectsSDK
 )
 
