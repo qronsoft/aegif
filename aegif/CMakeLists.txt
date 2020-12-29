@@ -11,9 +11,17 @@ SHARED
     src/aegif.cpp
     src/log.hpp
     src/log.cpp
-    src/strutil.hpp
-    src/strutil.cpp
+    src/charenc.hpp
+    src/charenc.cpp
     src/scopeguard.hpp
+    src/error_guard.hpp
+    src/catch_exception.hpp
+    src/global_setup.hpp
+    src/global_setup.cpp
+    src/global_setdown.hpp
+    src/global_setdown.cpp
+    src/aeio.hpp
+    src/aeio.cpp
 )
 
 target_include_directories(aegif

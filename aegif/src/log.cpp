@@ -78,7 +78,10 @@ void SetupLogger(const std::string& loggerName, SPBasicSuite* pica_basicP)
 #ifdef _AEGIF_USE_OS_CONSOLE_LOG
     logger->sinks().push_back(CreateOSConsoleLogSink());
 #endif
-    if (pica_basicP) { logger->sinks().push_back(CreateAEGPDebugLogSink(pica_basicP)); }
+    if (pica_basicP)
+    {
+        logger->sinks().push_back(CreateAEGPDebugLogSink(pica_basicP));
+    }
     spdlog::set_default_logger(logger);
     spdlog::set_level(spdlog::level::trace);
     spdlog::flush_every(std::chrono::seconds(3));

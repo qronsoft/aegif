@@ -1,4 +1,4 @@
-﻿#include "strutil.hpp"
+﻿#include "charenc.hpp"
 
 // win32
 #include <Windows.h>
