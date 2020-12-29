@@ -39,8 +39,8 @@ endif()
 
 # 3rd party libs
 add_subdirectory(3rd/spdlog EXCLUDE_FROM_ALL)
-add_subdirectory(3rd/AuxCMakeLists/gifski EXCLUDE_FROM_ALL)
-add_subdirectory(3rd/AuxCMakeLists/AfterEffectsSDK EXCLUDE_FROM_ALL)
+add_subdirectory(3rd/auxfiles/gifski EXCLUDE_FROM_ALL)
+add_subdirectory(3rd/auxfiles/AfterEffectsSDK EXCLUDE_FROM_ALL)
 
 # targets
 add_subdirectory(aegif)
