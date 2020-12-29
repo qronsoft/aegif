@@ -13,6 +13,7 @@ SHARED
     src/log.cpp
     src/strutil.hpp
     src/strutil.cpp
+    src/scopeguard.hpp
 )
 
 target_include_directories(aegif
@@ -24,6 +25,7 @@ target_link_libraries(aegif
 PRIVATE
     $<$<CONFIG:Debug>:spdlog>
     $<$<CONFIG:RelWithDebInfo>:spdlog>
+    gifski
     AfterEffectsSDK
 )
 

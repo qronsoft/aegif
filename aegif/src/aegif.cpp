@@ -3,9 +3,13 @@
 #include <entry.h>
 #include <AEGP_SuiteHandler.h>
 
+// gifski
+#include <gifski.h>
+
 // aegif
 #include "log.hpp"
 #include "strutil.hpp"
+#include "scopeguard.hpp"
 
 namespace
 {
@@ -47,6 +51,20 @@ extern "C" DllExport A_Err EntryPointFunc(
 
     AEGLOG_TRACE("register death hook");
     suites.RegisterSuite5()->AEGP_RegisterDeathHook(aegp_pluginId, DeathHook, nullptr);
+
+    GifskiSettings gifskiSettings = {};
+    gifski* gifski                = gifski_new(&gifskiSettings);
+    if (gifski == nullptr)
+    {
+        AEGLOG_ERROR("invalid gifski settings");
+    }
+    aegif::ScopeGuard setdownGifski([&]() {
+        if (gifski)
+        {
+            gifski_finish(gifski);
+            gifski = nullptr;
+        }
+    });
 
     return A_Err_NONE;
 }
