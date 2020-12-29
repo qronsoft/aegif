@@ -26,15 +26,6 @@ A_Err AEIO_GetDepths(AEIO_BasicData* basic_dataP, AEIO_OutSpecH outH, AEIO_Suppo
     return A_Err_NONE;
 }
 
-A_Err AEIO_GetOutputInfo(AEIO_BasicData* basic_dataP, AEIO_OutSpecH outH, AEIO_Verbiage* verbiage)
-{
-    AEGLOG_BLOCK("AEIO_GetOutputInfo");
-    // TODO: impl
-    memset(verbiage->type, 0, sizeof(verbiage));
-    strcpy(verbiage->type, "GIF");
-    return A_Err_NONE;
-}
-
 A_Err AEIO_UserOptionsDialog(
     AEIO_BasicData* basic_dataP,
     AEIO_OutSpecH outH,
@@ -42,13 +33,6 @@ A_Err AEIO_UserOptionsDialog(
     A_Boolean* user_interacted0)
 {
     AEGLOG_BLOCK("AEIO_UserOptionsDialog");
-    // TODO: impl
-    return AEIO_Err_USE_DFLT_CALLBACK;
-}
-
-A_Err AEIO_SetOutputFile(AEIO_BasicData* basic_dataP, AEIO_OutSpecH outH, const A_UTF16Char* file_pathZ)
-{
-    AEGLOG_BLOCK("AEIO_SetOutputFile");
     // TODO: impl
     return AEIO_Err_USE_DFLT_CALLBACK;
 }
@@ -90,7 +74,7 @@ A_Err ConstructModuleInfo(AEGP_SuiteHandler& suites, AEIO_ModuleInfo* info)
     AEFX_CLR_STRUCT(*info);
 
     info->sig = 'qAEG';
-    strcpy(info->name, "GIF Encoder");
+    strcpy(info->name, "Ae GIF");
 
     info->flags = AEIO_MFlag_NONE;
     info->flags |= AEIO_MFlag_OUTPUT;
@@ -130,63 +114,68 @@ A_Err ConstructFunctionBlock(AEGP_SuiteHandler& suites, AEIO_FunctionBlock4* fun
 
     AEFX_CLR_STRUCT(*funcs);
 
-    funcs->AEIO_InitOutputSpec    = aegif::CatchException<AEIO_InitOutputSpec>;
-    funcs->AEIO_GetDepths         = aegif::CatchException<AEIO_GetDepths>;
-    funcs->AEIO_GetOutputInfo     = aegif::CatchException<AEIO_GetOutputInfo>;
-    funcs->AEIO_UserOptionsDialog = aegif::CatchException<AEIO_UserOptionsDialog>;
-    funcs->AEIO_SetOutputFile     = aegif::CatchException<AEIO_SetOutputFile>;
-    funcs->AEIO_StartAdding       = aegif::CatchException<AEIO_StartAdding>;
-    funcs->AEIO_AddFrame          = aegif::CatchException<AEIO_AddFrame>;
-    funcs->AEIO_EndAdding         = aegif::CatchException<AEIO_EndAdding>;
-
-#define StubAEIOCallback(callbackName)                                                                       \
+#define DEFAULT_CALLBACK(callbackName)                                                                       \
     [](auto...) -> A_Err {                                                                                   \
-        AEGLOG_TRACE("stub: {} called", #callbackName);                                                      \
+        AEGLOG_TRACE("default {} called", #callbackName);                                                    \
         return AEIO_Err_USE_DFLT_CALLBACK;                                                                   \
     }
 
-    // stubs
-    funcs->AEIO_InitInSpecFromFile     = StubAEIOCallback(AEIO_InitInSpecFromFile);
-    funcs->AEIO_InitInSpecInteractive  = StubAEIOCallback(AEIO_InitInSpecInteractive);
-    funcs->AEIO_DisposeInSpec          = StubAEIOCallback(AEIO_DisposeInSpec);
-    funcs->AEIO_FlattenOptions         = StubAEIOCallback(AEIO_FlattenOptions);
-    funcs->AEIO_InflateOptions         = StubAEIOCallback(AEIO_InflateOptions);
-    funcs->AEIO_SynchInSpec            = StubAEIOCallback(AEIO_SynchInSpec);
-    funcs->AEIO_GetActiveExtent        = StubAEIOCallback(AEIO_GetActiveExtent);
-    funcs->AEIO_GetInSpecInfo          = StubAEIOCallback(AEIO_GetInSpecInfo);
-    funcs->AEIO_DrawSparseFrame        = StubAEIOCallback(AEIO_DrawSparseFrame);
-    funcs->AEIO_GetDimensions          = StubAEIOCallback(AEIO_GetDimensions);
-    funcs->AEIO_GetDuration            = StubAEIOCallback(AEIO_GetDuration);
-    funcs->AEIO_GetTime                = StubAEIOCallback(AEIO_GetTime);
-    funcs->AEIO_GetSound               = StubAEIOCallback(AEIO_GetSound);
-    funcs->AEIO_InqNextFrameTime       = StubAEIOCallback(AEIO_InqNextFrameTime);
-    funcs->AEIO_GetFlatOutputOptions   = StubAEIOCallback(AEIO_GetFlatOutputOptions);
-    funcs->AEIO_DisposeOutputOptions   = StubAEIOCallback(AEIO_DisposeOutputOptions);
-    funcs->AEIO_OutputInfoChanged      = StubAEIOCallback(AEIO_OutputInfoChanged);
-    funcs->AEIO_OutputFrame            = StubAEIOCallback(AEIO_OutputFrame);
-    funcs->AEIO_WriteLabels            = StubAEIOCallback(AEIO_WriteLabels);
-    funcs->AEIO_GetSizes               = StubAEIOCallback(AEIO_GetSizes);
-    funcs->AEIO_Flush                  = StubAEIOCallback(AEIO_Flush);
-    funcs->AEIO_AddSoundChunk          = StubAEIOCallback(AEIO_AddSoundChunk);
-    funcs->AEIO_Idle                   = [](auto...) -> A_Err { return AEIO_Err_USE_DFLT_CALLBACK; };
-    funcs->AEIO_GetOutputSuffix        = StubAEIOCallback(AEIO_GetOutputSuffix);
-    funcs->AEIO_SeqOptionsDlg          = StubAEIOCallback(AEIO_SeqOptionsDlg);
-    funcs->AEIO_GetNumAuxChannels      = StubAEIOCallback(AEIO_GetNumAuxChannels);
-    funcs->AEIO_GetAuxChannelDesc      = StubAEIOCallback(AEIO_GetAuxChannelDesc);
-    funcs->AEIO_DrawAuxChannel         = StubAEIOCallback(AEIO_DrawAuxChannel);
-    funcs->AEIO_FreeAuxChannel         = StubAEIOCallback(AEIO_FreeAuxChannel);
-    funcs->AEIO_NumAuxFiles            = StubAEIOCallback(AEIO_NumAuxFiles);
-    funcs->AEIO_GetNthAuxFileSpec      = StubAEIOCallback(AEIO_GetNthAuxFileSpec);
-    funcs->AEIO_CloseSourceFiles       = StubAEIOCallback(AEIO_CloseSourceFiles);
-    funcs->AEIO_CountUserData          = StubAEIOCallback(AEIO_CountUserData);
-    funcs->AEIO_SetUserData            = StubAEIOCallback(AEIO_SetUserData);
-    funcs->AEIO_GetUserData            = StubAEIOCallback(AEIO_GetUserData);
-    funcs->AEIO_AddMarker              = StubAEIOCallback(AEIO_AddMarker);
-    funcs->AEIO_VerifyFileImportable   = StubAEIOCallback(AEIO_VerifyFileImportable);
-    funcs->AEIO_UserAudioOptionsDialog = StubAEIOCallback(AEIO_UserAudioOptionsDialog);
-    funcs->AEIO_AddMarker2             = StubAEIOCallback(AEIO_AddMarker2);
-    funcs->AEIO_AddMarker3             = StubAEIOCallback(AEIO_AddMarker3);
-    funcs->AEIO_GetMimeType            = StubAEIOCallback(AEIO_GetMimeType);
+    /* required */
+    funcs->AEIO_InitOutputSpec       = aegif::CatchException<AEIO_InitOutputSpec>;
+    funcs->AEIO_GetFlatOutputOptions = DEFAULT_CALLBACK(AEIO_GetFlatOutputOptions);
+    funcs->AEIO_SetOutputFile        = DEFAULT_CALLBACK(AEIO_SetOutputFile);
+    funcs->AEIO_StartAdding          = aegif::CatchException<AEIO_StartAdding>;
+    funcs->AEIO_AddFrame             = aegif::CatchException<AEIO_AddFrame>;
+    funcs->AEIO_EndAdding            = aegif::CatchException<AEIO_EndAdding>;
+    funcs->AEIO_WriteLabels          = DEFAULT_CALLBACK(AEIO_WriteLabels);
+    funcs->AEIO_GetSizes             = DEFAULT_CALLBACK(AEIO_GetSizes);
+    funcs->AEIO_GetDepths            = aegif::CatchException<AEIO_GetDepths>;
+    funcs->AEIO_GetOutputSuffix      = DEFAULT_CALLBACK(AEIO_GetOutputSuffix);
+
+    /* not required */
+    funcs->AEIO_DisposeOutputOptions = DEFAULT_CALLBACK(AEIO_DisposeOutputOptions);
+    funcs->AEIO_UserOptionsDialog    = aegif::CatchException<AEIO_UserOptionsDialog>;
+    funcs->AEIO_GetOutputInfo        = DEFAULT_CALLBACK(AEIO_GetOutputInfo);
+    funcs->AEIO_OutputInfoChanged    = DEFAULT_CALLBACK(AEIO_OutputInfoChanged);
+    funcs->AEIO_Flush                = DEFAULT_CALLBACK(AEIO_Flush);
+    funcs->AEIO_Idle                 = nullptr;
+    funcs->AEIO_SetUserData          = DEFAULT_CALLBACK(AEIO_SetUserData);
+    funcs->AEIO_GetMimeType          = DEFAULT_CALLBACK(AEIO_GetMimeType);
+
+    /* not used for gif */
+    funcs->AEIO_OutputFrame            = nullptr;
+    funcs->AEIO_AddMarker              = nullptr;
+    funcs->AEIO_AddMarker2             = nullptr;
+    funcs->AEIO_AddMarker3             = nullptr;
+    funcs->AEIO_UserAudioOptionsDialog = nullptr;
+    funcs->AEIO_AddSoundChunk          = nullptr;
+
+    /* input only callbacks, not used */
+    funcs->AEIO_InitInSpecFromFile    = nullptr;
+    funcs->AEIO_InitInSpecInteractive = nullptr;
+    funcs->AEIO_DisposeInSpec         = nullptr;
+    funcs->AEIO_FlattenOptions        = nullptr;
+    funcs->AEIO_InflateOptions        = nullptr;
+    funcs->AEIO_SynchInSpec           = nullptr;
+    funcs->AEIO_GetActiveExtent       = nullptr;
+    funcs->AEIO_GetInSpecInfo         = nullptr;
+    funcs->AEIO_DrawSparseFrame       = nullptr;
+    funcs->AEIO_GetDimensions         = nullptr;
+    funcs->AEIO_GetDuration           = nullptr;
+    funcs->AEIO_GetTime               = nullptr;
+    funcs->AEIO_GetSound              = nullptr;
+    funcs->AEIO_InqNextFrameTime      = nullptr;
+    funcs->AEIO_SeqOptionsDlg         = nullptr;
+    funcs->AEIO_GetNumAuxChannels     = nullptr;
+    funcs->AEIO_GetAuxChannelDesc     = nullptr;
+    funcs->AEIO_FreeAuxChannel        = nullptr;
+    funcs->AEIO_NumAuxFiles           = nullptr;
+    funcs->AEIO_GetNthAuxFileSpec     = nullptr;
+    funcs->AEIO_CloseSourceFiles      = nullptr;
+    funcs->AEIO_CountUserData         = nullptr;
+    funcs->AEIO_GetUserData           = nullptr;
+    funcs->AEIO_VerifyFileImportable  = nullptr;
+    funcs->AEIO_DrawAuxChannel        = nullptr;
 
     return A_Err_NONE;
 }
