@@ -25,7 +25,7 @@ BreakBeforeBraces: Allman
 BreakBeforeTernaryOperators: false
 BreakConstructorInitializersBeforeComma: true
 ColumnLimit: 110
-ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
 Cpp11BracedListStyle: false
 DerivePointerAlignment: false
 FixNamespaceComments: false

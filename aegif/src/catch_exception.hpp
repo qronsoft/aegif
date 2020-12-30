@@ -21,7 +21,7 @@ catch (const std::exception& ex)
 }
 catch (A_Err err)
 {
-    AEGLOG_ERROR("catch A_Err {}", err);
+    AEGLOG_ERROR("catch A_Err: {}", err);
     return err;
 }
 catch (...)

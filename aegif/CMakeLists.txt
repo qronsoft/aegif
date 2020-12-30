@@ -13,8 +13,12 @@ SHARED
     src/log.cpp
     src/charenc.hpp
     src/charenc.cpp
-    src/scopeguard.hpp
+    src/scope_guard.hpp
     src/error_guard.hpp
+    src/aegp_mem_lock_guard.hpp
+    src/aegp_mem_lock_guard.cpp
+    src/aegp_mem.hpp
+    src/aegp_mem.cpp
     src/catch_exception.hpp
     src/global_setup.hpp
     src/global_setup.cpp
@@ -22,6 +26,8 @@ SHARED
     src/global_setdown.cpp
     src/aeio.hpp
     src/aeio.cpp
+    src/gif_encoder.hpp
+    src/gif_encoder.cpp
 )
 
 target_include_directories(aegif

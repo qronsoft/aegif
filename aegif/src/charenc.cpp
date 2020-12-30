@@ -39,4 +39,8 @@ std::string OEMToU8(std::string_view s) noexcept
 {
     return WToU8(FromMultiByte<CP_OEMCP>(s));
 }
+std::string U16ToU8(std::basic_string_view<A_UTF16Char> s) noexcept
+{
+    return WToU8((const wchar_t*) s.data()); // win only
+}
 }

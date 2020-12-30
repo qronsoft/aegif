@@ -25,6 +25,10 @@ A_Err UnsafeGlobalSetup(
 
     AEGP_SuiteHandler suites(pica_basicP);
 
+#ifndef NDEBUG
+    GUARD_A_Err(suites.MemorySuite1()->AEGP_SetMemReportingOn(TRUE));
+#endif
+
     AEGLOG_TRACE("register death hook");
     GUARD_A_Err(
         suites.RegisterSuite5()->AEGP_RegisterDeathHook(aegp_pluginId, aegif::GlobalSetdown, nullptr));
