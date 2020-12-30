@@ -9,25 +9,26 @@ add_library(aegif
 SHARED
     ${CMAKE_CURRENT_BINARY_DIR}/aegif.rc
     src/aegif.cpp
-    src/log.hpp
-    src/log.cpp
-    src/charenc.hpp
-    src/charenc.cpp
-    src/scope_guard.hpp
-    src/error_guard.hpp
-    src/aegp_mem_lock_guard.hpp
-    src/aegp_mem_lock_guard.cpp
-    src/aegp_mem.hpp
     src/aegp_mem.cpp
-    src/catch_exception.hpp
-    src/global_setup.hpp
-    src/global_setup.cpp
-    src/global_setdown.hpp
-    src/global_setdown.cpp
-    src/aeio.hpp
+    src/aegp_mem.hpp
+    src/aegp_mem_lock_guard.cpp
+    src/aegp_mem_lock_guard.hpp
     src/aeio.cpp
-    src/gif_encoder.hpp
+    src/aeio.hpp
+    src/catch_exception.hpp
+    src/charenc.cpp
+    src/charenc.hpp
+    src/error_guard.hpp
     src/gif_encoder.cpp
+    src/gif_encoder.hpp
+    src/global_setdown.cpp
+    src/global_setdown.hpp
+    src/global_setup.cpp
+    src/global_setup.hpp
+    src/log.cpp
+    src/log.hpp
+    src/scope_guard.hpp
+
 )
 
 target_include_directories(aegif
