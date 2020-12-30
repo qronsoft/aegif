@@ -3,4 +3,4 @@
 	url = https://github.com/gabime/spdlog
 [submodule "3rd/gifski"]
 	path = 3rd/gifski
-	url = https://github.com/ImageOptim/gifski
+	url = https://github.com/sindresorhus/Gifski/
