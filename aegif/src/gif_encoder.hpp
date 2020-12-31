@@ -20,18 +20,22 @@ public:
         bool fast       = false;
     };
 
-    GIFEncoder(Options options, const std::string& outPathU8);
+    GIFEncoder();
     ~GIFEncoder();
 
     enum class Error
     {
         NONE = 0,
+        NOT_INITED,
         INVALID_OPTIONS,
         INVALID_OUTPUT_DESTINATION,
-        ENCODE_FAILED
+        ENCODE_FAILED,
+        ALREADY_INITED
     };
-    Error GetError() const { return error_; }
-    bool HasError() const { return GetError() != Error::NONE; }
+
+    Error Init(Options options);
+
+    Error SetOutputPath(const std::string& outPathU8);
 
     Error AddFrameARGB(
         uint32_t frameIdx,
@@ -41,11 +45,12 @@ public:
         const unsigned char* pixels,
         double displayTimeSec);
 
+    Error Finish();
+
 private:
     GIFEncoder(const GIFEncoder&) = delete;
     GIFEncoder& operator=(const GIFEncoder&) = delete;
 
     struct gifski* gifski_;
-    Error error_;
 };
 }

@@ -220,28 +220,36 @@ A_Err AEIO_StartAdding(AEIO_BasicData* basic_dataP, AEIO_OutSpecH outH, A_long f
 
     std::string filePathU8;
     GUARD_A_Err(GetFilePathU8FromOutSpecH(basic_dataP, outH, &filePathU8));
+    GUARD_ERROR(!filePathU8.empty(), AEIO_Err_BAD_FILENAME);
 
     aegif::GIFEncoder::Options encoderOptions;
-
     encoderOptions.width   = width;
     encoderOptions.height  = height;
     encoderOptions.quality = outputOptions.quality;
     encoderOptions.loopCnt = outputOptions.loopCnt;
     encoderOptions.fast    = outputOptions.fast;
 
-    s_gifEncoder.reset(new aegif::GIFEncoder(encoderOptions, filePathU8));
+    std::unique_ptr<aegif::GIFEncoder> encoder(new aegif::GIFEncoder());
 
-    if (s_gifEncoder->HasError())
+    if (encoder->Init(encoderOptions) != aegif::GIFEncoder::Error::NONE)
     {
-        s_gifEncoder.reset();
-
         constexpr A_Err err   = A_Err_STRUCT;
-        const A_char errMsg[] = "failed to create gif encoder";
-
+        const A_char errMsg[] = "invalid encode options";
         AEGLOG_ERROR(errMsg);
         basic_dataP->msg_func(err, errMsg);
         return err;
     }
+
+    if (encoder->SetOutputPath(filePathU8) != aegif::GIFEncoder::Error::NONE)
+    {
+        constexpr A_Err err   = A_Err_GENERIC;
+        const A_char errMsg[] = "invalid output destination";
+        AEGLOG_ERROR(errMsg);
+        basic_dataP->msg_func(err, errMsg);
+        return err;
+    }
+
+    s_gifEncoder = std::move(encoder);
 
     AEGLOG_INFO("encode started!");
 
@@ -286,7 +294,13 @@ A_Err AEIO_EndAdding(AEIO_BasicData* basic_dataP, AEIO_OutSpecH outH, A_long fla
 {
     AEGLOG_BLOCK("AEIO_EndAdding");
 
-    s_gifEncoder.reset();
+    aegif::ScopeGuard releaesGifEncoder([&]() { s_gifEncoder.reset(); });
+
+    if (s_gifEncoder->Finish() != aegif::GIFEncoder::Error::NONE)
+    {
+        AEGLOG_ERROR("failed to encode");
+        return A_Err_GENERIC;
+    }
 
     AEGLOG_INFO("encode completed!");
 
@@ -342,13 +356,13 @@ A_Err ConstructFunctionBlock(AEGP_SuiteHandler& suites, AEIO_FunctionBlock4* fun
 
 #define default_cb(callbackName)                                                                             \
     [](auto...) -> A_Err {                                                                                   \
-        AEGLOG_TRACE("default {} called", #callbackName);                                                    \
+        AEGLOG_DEBUG("default {} called", #callbackName);                                                    \
         return AEIO_Err_USE_DFLT_CALLBACK;                                                                   \
     }
 
 #define stub_cb(callbackName)                                                                                \
     [](auto...) -> A_Err {                                                                                   \
-        AEGLOG_TRACE("stub {} called", #callbackName);                                                       \
+        AEGLOG_DEBUG("stub {} called", #callbackName);                                                       \
         return A_Err_NONE;                                                                                   \
     }
 

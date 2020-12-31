@@ -8,10 +8,21 @@
 
 namespace aegif
 {
-GIFEncoder::GIFEncoder(Options options, const std::string& outPathU8)
+GIFEncoder::GIFEncoder()
     : gifski_(nullptr)
-    , error_(Error::NONE)
 {
+}
+GIFEncoder::~GIFEncoder()
+{
+    Finish();
+}
+GIFEncoder::Error GIFEncoder::Init(Options options)
+{
+    if (gifski_ != nullptr)
+    {
+        return Error::ALREADY_INITED;
+    }
+
     GifskiSettings gifskiSettings = {};
 
     gifskiSettings.width      = options.width;
@@ -24,21 +35,22 @@ GIFEncoder::GIFEncoder(Options options, const std::string& outPathU8)
     if (gifski_ == nullptr)
     {
         AEGLOG_ERROR("invalid encode options was passed");
-        error_ = Error::INVALID_OPTIONS;
+        return Error::INVALID_OPTIONS;
     }
+
+    return Error::NONE;
+}
+GIFEncoder::Error GIFEncoder::SetOutputPath(const std::string& outPathU8)
+{
+    if (gifski_ == nullptr) return Error::NOT_INITED;
 
     if (gifski_set_file_output(gifski_, outPathU8.c_str()) != GifskiError::GIFSKI_OK)
     {
+        // TODO: detailed error reporting
         AEGLOG_ERROR("invalid output destination");
-        error_ = Error::INVALID_OUTPUT_DESTINATION;
+        return Error::INVALID_OUTPUT_DESTINATION;
     }
-}
-GIFEncoder::~GIFEncoder()
-{
-    if (gifski_)
-    {
-        gifski_finish(gifski_);
-    }
+    return Error::NONE;
 }
 GIFEncoder::Error GIFEncoder::AddFrameARGB(
     uint32_t frameIdx,
@@ -48,12 +60,27 @@ GIFEncoder::Error GIFEncoder::AddFrameARGB(
     const unsigned char* pixels,
     double displayTimeSec)
 {
-    if (error_ != Error::NONE) return error_;
+    if (gifski_ == nullptr) return Error::NOT_INITED;
 
     if (gifski_add_frame_argb(gifski_, frameIdx, width, bytesPerRow, height, pixels, displayTimeSec)
         != GIFSKI_OK)
     {
-        return error_ = Error::ENCODE_FAILED;
+        return Error::ENCODE_FAILED;
+    }
+
+    return Error::NONE;
+}
+GIFEncoder::Error GIFEncoder::Finish()
+{
+    if (gifski_ == nullptr) return Error::NOT_INITED;
+
+    const auto err = gifski_finish(gifski_);
+    gifski_        = nullptr;
+
+    if (err != GifskiError::GIFSKI_OK)
+    {
+        // TODO: detailed error reporting
+        return Error::ENCODE_FAILED;
     }
 
     return Error::NONE;
