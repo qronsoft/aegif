@@ -1,4 +1,4 @@
-﻿#include "aeio.hpp"
+#include "aeio.hpp"
 
 // std
 #include <memory>
@@ -27,9 +27,9 @@ namespace
 struct FlatOutputOptions
 {
     // encode
-    uint8_t quality = 100; /* 1 ~ 100*/
-    bool once       = false;
-    bool fast       = true;
+    uint8_t quality = 100; /* 1 ~ 100 */
+    int16_t loopCnt = 0;
+    bool fast       = false;
 };
 }
 
@@ -202,7 +202,7 @@ A_Err AEIO_StartAdding(AEIO_BasicData* basic_dataP, AEIO_OutSpecH outH, A_long f
     encoderOptions.width   = width;
     encoderOptions.height  = height;
     encoderOptions.quality = outputOptions.quality;
-    encoderOptions.once    = outputOptions.once;
+    encoderOptions.loopCnt = outputOptions.loopCnt;
     encoderOptions.fast    = outputOptions.fast;
 
     s_gifEncoder.reset(new aegif::GIFEncoder(encoderOptions, aegif::U16ToU8(filePathU16)));

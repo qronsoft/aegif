@@ -15,9 +15,9 @@ public:
     {
         uint32_t width  = 0;
         uint32_t height = 0;
-        uint8_t quality = 100; /* 1 ~ 100*/
-        bool once       = false;
-        bool fast       = true;
+        uint8_t quality = 100; /* 1 ~ 100 */
+        int16_t loopCnt = 0;
+        bool fast       = false;
     };
 
     GIFEncoder(Options options, const std::string& outPathU8);
@@ -40,6 +40,7 @@ public:
         uint32_t bytesPerRow,
         const unsigned char* pixels,
         double displayTimeSec);
+
 private:
     GIFEncoder(const GIFEncoder&) = delete;
     GIFEncoder& operator=(const GIFEncoder&) = delete;

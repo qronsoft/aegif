@@ -14,11 +14,11 @@ GIFEncoder::GIFEncoder(Options options, const std::string& outPathU8)
 {
     GifskiSettings gifskiSettings = {};
 
-    gifskiSettings.width   = options.width;
-    gifskiSettings.height  = options.height;
-    gifskiSettings.quality = options.quality;
-    gifskiSettings.once    = options.once;
-    gifskiSettings.fast    = options.fast;
+    gifskiSettings.width      = options.width;
+    gifskiSettings.height     = options.height;
+    gifskiSettings.quality    = options.quality;
+    gifskiSettings.loop_count = options.loopCnt;
+    gifskiSettings.fast       = options.fast;
 
     gifski_ = gifski_new(&gifskiSettings);
     if (gifski_ == nullptr)

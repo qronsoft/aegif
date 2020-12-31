@@ -1,4 +1,4 @@
-set(GIFSKI_ROOT_DIR ${PROJECT_SOURCE_DIR}/3rd/gifski)
+set(GIFSKI_ROOT_DIR ${PROJECT_SOURCE_DIR}/3rd/gifski/gifski-api)
 set(GIFSKI_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/target)
 set(GIFSKI_RELEASE ${GIFSKI_BUILD_DIR}/release/gifski.lib)
 set(GIFSKI_DEBUG ${GIFSKI_BUILD_DIR}/debug/gifski.lib)
