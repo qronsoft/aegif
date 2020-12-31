@@ -1,4 +1,4 @@
-#include "aeio.hpp"
+﻿#include "aeio.hpp"
 
 // std
 #include <memory>
@@ -45,6 +45,34 @@ A_Err GetOptionsDataFromOutSpecH(AEIO_BasicData* basic_dataP, AEIO_OutSpecH outH
     GUARD_ERROR(optionsH != nullptr, A_Err_GENERIC);
     GUARD_A_Err(aegif::GetDataFromMemH(basic_dataP->pica_basicP, optionsH, options));
 
+    return A_Err_NONE;
+}
+
+A_Err GetFilePathU8FromOutSpecH(AEIO_BasicData* basic_dataP, AEIO_OutSpecH outH, std::string* filePathU8)
+{
+    AEGP_SuiteHandler suites(basic_dataP->pica_basicP);
+    A_Boolean fileReserved;
+    AEGP_MemHandle filePathH = nullptr;
+    GUARD_A_Err(suites.IOOutSuite4()->AEGP_GetOutSpecFilePath(outH, &filePathH, &fileReserved));
+    aegif::ScopeGuard freeFilePathH([&]() {
+        if (filePathH)
+        {
+            suites.MemorySuite1()->AEGP_FreeMemHandle(filePathH);
+        }
+    });
+
+    if (filePathH == nullptr)
+    {
+        filePathU8->clear();
+    }
+    else
+    {
+        std::basic_string<A_UTF16Char> filePathU16;
+        GUARD_A_Err(aegif::GetStringFromMemH(basic_dataP->pica_basicP, filePathH, &filePathU16));
+        GUARD_A_Err(suites.MemorySuite1()->AEGP_FreeMemHandle(filePathH));
+        filePathH   = nullptr;
+        *filePathU8 = aegif::U16ToU8(filePathU16);
+    }
     return A_Err_NONE;
 }
 }
@@ -190,12 +218,8 @@ A_Err AEIO_StartAdding(AEIO_BasicData* basic_dataP, AEIO_OutSpecH outH, A_long f
     A_long height = 0;
     GUARD_A_Err(suites.IOOutSuite4()->AEGP_GetOutSpecDimensions(outH, &width, &height));
 
-    A_Boolean fileReserved;
-    AEGP_MemHandle filePathH;
-    GUARD_A_Err(suites.IOOutSuite4()->AEGP_GetOutSpecFilePath(outH, &filePathH, &fileReserved));
-    GUARD_ERROR(filePathH != nullptr, A_Err_PARAMETER);
-    std::basic_string<A_UTF16Char> filePathU16;
-    GUARD_A_Err(aegif::GetStringFromMemH(basic_dataP->pica_basicP, filePathH, &filePathU16));
+    std::string filePathU8;
+    GUARD_A_Err(GetFilePathU8FromOutSpecH(basic_dataP, outH, &filePathU8));
 
     aegif::GIFEncoder::Options encoderOptions;
 
@@ -205,7 +229,7 @@ A_Err AEIO_StartAdding(AEIO_BasicData* basic_dataP, AEIO_OutSpecH outH, A_long f
     encoderOptions.loopCnt = outputOptions.loopCnt;
     encoderOptions.fast    = outputOptions.fast;
 
-    s_gifEncoder.reset(new aegif::GIFEncoder(encoderOptions, aegif::U16ToU8(filePathU16)));
+    s_gifEncoder.reset(new aegif::GIFEncoder(encoderOptions, filePathU8));
 
     if (s_gifEncoder->HasError())
     {
