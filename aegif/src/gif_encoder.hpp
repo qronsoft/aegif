@@ -3,6 +3,7 @@
 // std
 #include <cstdint>
 #include <string>
+#include <vector>
 
 struct gifski;
 
@@ -51,6 +52,10 @@ private:
     GIFEncoder(const GIFEncoder&) = delete;
     GIFEncoder& operator=(const GIFEncoder&) = delete;
 
+    void
+    ConvertARGBToRGB(uint32_t width, uint32_t height, uint32_t bytesPerRow, const unsigned char* srcPixels);
+
     struct gifski* gifski_;
+    std::vector<unsigned char> rgbPixelBuf_;
 };
 }

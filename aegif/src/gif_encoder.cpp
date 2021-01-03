@@ -65,7 +65,16 @@ GIFEncoder::Error GIFEncoder::AddFrameARGB(
 {
     if (gifski_ == nullptr) return Error::NOT_INITED;
 
-    if (gifski_add_frame_argb(gifski_, frameIdx, width, bytesPerRow, height, pixels, displayTimeSec)
+    ConvertARGBToRGB(width, height, bytesPerRow, pixels);
+
+    if (gifski_add_frame_rgb(
+            gifski_,
+            frameIdx,
+            width,
+            rgbPixelBuf_.size() / height,
+            height,
+            rgbPixelBuf_.data(),
+            displayTimeSec)
         != GIFSKI_OK)
     {
         return Error::ENCODE_FAILED;
@@ -87,5 +96,29 @@ GIFEncoder::Error GIFEncoder::Finish()
     }
 
     return Error::NONE;
+}
+void GIFEncoder::ConvertARGBToRGB(
+    uint32_t width, uint32_t height, uint32_t bytesPerRow, const unsigned char* srcPixels)
+{
+    rgbPixelBuf_.resize(width * height * 3, 0);
+    unsigned char* dstPixels = rgbPixelBuf_.data();
+
+    for (uint32_t y = 0; y < height; ++y)
+    {
+        const unsigned char* srcRow = srcPixels + y * bytesPerRow;
+        unsigned char* dstRow       = dstPixels + y * width * 3;
+        for (uint32_t x = 0; x < width; ++x)
+        {
+            const unsigned char* argb = srcRow + (x << 2);
+            const auto a              = uint16_t(argb[0]);
+            const auto r              = uint16_t(argb[1]);
+            const auto g              = uint16_t(argb[2]);
+            const auto b              = uint16_t(argb[3]);
+            unsigned char* rgb        = dstRow + x * 3;
+            *(rgb + 0)                = unsigned char(r * a / 255);
+            *(rgb + 1)                = unsigned char(g * a / 255);
+            *(rgb + 2)                = unsigned char(b * a / 255);
+        }
+    }
 }
 }
