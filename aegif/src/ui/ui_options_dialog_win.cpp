@@ -163,34 +163,6 @@ INT_PTR UIOptionsDialogWin::DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, L
             loop_ = SendDlgItemMessageW(hwndDlg, IDC_CHECK_LOOP, BM_GETCHECK, 0, 0) == BST_CHECKED;
             AEGLOG_TRACE("loop checkbox was toggled: {}", loop_);
             return TRUE;
-        case IDC_EDIT_IMAGE_QUALITY:
-            switch (HIWORD(wParam))
-            {
-            case EN_UPDATE:
-            {
-                wchar_t buf[4] = {};
-                GetWindowTextW(GetDlgItem(hwndDlg, IDC_EDIT_IMAGE_QUALITY), buf, 4);
-                if (buf[0] != L'\0')
-                {
-                    imageQuality_ = _wtoi(buf);
-                    AEGLOG_TRACE("image quality edit was updated: {}", imageQuality_);
-                    if (imageQuality_ < IMAGE_QUALITY_MIN || imageQuality_ > IMAGE_QUALITY_MAX)
-                    {
-                        imageQuality_ = std::clamp(imageQuality_, IMAGE_QUALITY_MIN, IMAGE_QUALITY_MAX);
-                        AEGLOG_TRACE("input value was clamped: {}", imageQuality_);
-                        UpdateImageQualityEdit(hwndDlg);
-                    }
-                    UpdateImageQualitySlider(hwndDlg);
-                    return TRUE;
-                }
-                else
-                {
-                    AEGLOG_TRACE("image quality edit was cleared");
-                }
-            }
-            break;
-            }
-            return FALSE;
         case IDC_CHECK_FAST_ENCODE:
             fastEncode_
                 = SendDlgItemMessageW(hwndDlg, IDC_CHECK_FAST_ENCODE, BM_GETCHECK, 0, 0) == BST_CHECKED;
@@ -203,7 +175,7 @@ INT_PTR UIOptionsDialogWin::DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, L
         {
             imageQuality_ = SendDlgItemMessageW(hwndDlg, IDC_SLIDER_IMAGE_QUALITY, TBM_GETPOS, 0, 0);
             AEGLOG_TRACE("image quality slider was tracked: {}", imageQuality_);
-            UpdateImageQualityEdit(hwndDlg);
+            UpdateImageQualityStatic(hwndDlg);
             return TRUE;
         }
         return FALSE;
@@ -222,9 +194,6 @@ void UIOptionsDialogWin::InitUI(HWND hwndDlg)
     SendDlgItemMessageW(hwndDlg, IDC_SLIDER_IMAGE_QUALITY, TBM_SETRANGEMIN, FALSE, IMAGE_QUALITY_MIN);
     SendDlgItemMessageW(hwndDlg, IDC_SLIDER_IMAGE_QUALITY, TBM_SETRANGEMAX, TRUE, IMAGE_QUALITY_MAX);
 
-    // image-quality-edit
-    SendDlgItemMessageW(hwndDlg, IDC_EDIT_IMAGE_QUALITY, EM_SETLIMITTEXT, 3, 0);
-
     // fast-encode-checkbox
     CreateToolTip(
         hwndDlg,
@@ -233,7 +202,7 @@ void UIOptionsDialogWin::InitUI(HWND hwndDlg)
 
     /* update states */
     UpdateLoopCheckbox(hwndDlg);
-    UpdateImageQualityEdit(hwndDlg);
+    UpdateImageQualityStatic(hwndDlg);
     UpdateImageQualitySlider(hwndDlg);
     UpdateFastEncodeCheckbox(hwndDlg);
 }
@@ -241,12 +210,9 @@ void UIOptionsDialogWin::UpdateLoopCheckbox(HWND hwndDlg)
 {
     SendDlgItemMessageW(hwndDlg, IDC_CHECK_LOOP, BM_SETCHECK, BoolToCheck(loop_), 0);
 }
-void UIOptionsDialogWin::UpdateImageQualityEdit(HWND hwndDlg)
+void UIOptionsDialogWin::UpdateImageQualityStatic(HWND hwndDlg)
 {
-    SetWindowTextW(GetDlgItem(hwndDlg, IDC_EDIT_IMAGE_QUALITY), std::to_wstring(imageQuality_).c_str());
-    // move cursor to end
-    SendDlgItemMessageW(hwndDlg, IDC_EDIT_IMAGE_QUALITY, EM_SETSEL, 0, -1);
-    SendDlgItemMessageW(hwndDlg, IDC_EDIT_IMAGE_QUALITY, EM_SETSEL, -1, 0);
+    SetDlgItemTextW(hwndDlg, IDC_STATIC_IMAGE_QUALITY, std::to_wstring(imageQuality_).c_str());
 }
 void UIOptionsDialogWin::UpdateImageQualitySlider(HWND hwndDlg)
 {

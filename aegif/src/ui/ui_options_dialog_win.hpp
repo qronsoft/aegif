@@ -31,7 +31,7 @@ private:
 
     void InitUI(HWND hwndDlg);
     void UpdateLoopCheckbox(HWND hwndDlg);
-    void UpdateImageQualityEdit(HWND hwndDlg);
+    void UpdateImageQualityStatic(HWND hwndDlg);
     void UpdateImageQualitySlider(HWND hwndDlg);
     void UpdateFastEncodeCheckbox(HWND hwndDlg);
 

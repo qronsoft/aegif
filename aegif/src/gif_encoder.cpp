@@ -1,5 +1,8 @@
 ﻿#include "gif_encoder.hpp"
 
+// std
+#include <algorithm>
+
 // gifski
 #include <gifski.h>
 
@@ -27,7 +30,7 @@ GIFEncoder::Error GIFEncoder::Init(Options options)
 
     gifskiSettings.width      = options.width;
     gifskiSettings.height     = options.height;
-    gifskiSettings.quality    = options.quality;
+    gifskiSettings.quality    = std::clamp(options.quality, uint8_t(1), uint8_t(100));
     gifskiSettings.loop_count = options.loop ? 0 : -1;
     gifskiSettings.fast       = options.fast;
 

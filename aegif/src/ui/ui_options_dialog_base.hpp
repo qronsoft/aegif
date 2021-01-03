@@ -25,7 +25,7 @@ public:
 
     static UIOptionsDialogBase* Create(void* parentWindowHandle);
 
-    static constexpr int IMAGE_QUALITY_MIN = 1;
+    static constexpr int IMAGE_QUALITY_MIN = 50;
     static constexpr int IMAGE_QUALITY_MAX = 100;
 };
 }
