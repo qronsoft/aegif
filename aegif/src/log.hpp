@@ -20,7 +20,8 @@ template <class... Args>
 class __Block
 {
 public:
-    __Block(spdlog::source_loc loc, spdlog::string_view_t fmt, Args... args) : srcLoc_(loc)
+    __Block(spdlog::source_loc loc, spdlog::string_view_t fmt, Args... args)
+        : srcLoc_(loc)
     {
         spdlog::memory_buf_t buf;
         fmt::format_to(buf, fmt, args...);

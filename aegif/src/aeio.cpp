@@ -14,6 +14,7 @@
 #include "catch_exception.hpp"
 #include "aegp_mem.hpp"
 #include "gif_encoder.hpp"
+#include "options_dialog.hpp"
 
 /* variables */
 namespace
@@ -26,10 +27,9 @@ namespace
 {
 struct FlatOutputOptions
 {
-    // encode
-    uint8_t quality = 100; /* 1 ~ 100 */
-    int16_t loopCnt = 0;
+    bool loop       = true;
     bool fast       = false;
+    uint8_t quality = 100; /* 1 ~ 100 */
 };
 }
 
@@ -202,8 +202,56 @@ A_Err AEIO_UserOptionsDialog(
     A_Boolean* user_interacted0)
 {
     AEGLOG_BLOCK("AEIO_UserOptionsDialog");
-    // TODO: impl
-    return A_Err_GENERIC;
+    *user_interacted0 = FALSE;
+
+    static bool s_isOptionsDialogOpened = false;
+    if (s_isOptionsDialogOpened)
+    {
+        AEGLOG_TRACE("options dialog is now already open");
+        return A_Err_NONE;
+    }
+    s_isOptionsDialogOpened = true;
+    aegif::ScopeGuard onExit([]() { s_isOptionsDialogOpened = false; });
+
+    AEGP_SuiteHandler suites(basic_dataP->pica_basicP);
+
+    void* mainWindowHandle = nullptr;
+    GUARD_A_Err(suites.UtilitySuite3()->AEGP_GetMainHWND(&mainWindowHandle));
+
+    AEGP_MemHandle optionsH = nullptr;
+    GUARD_A_Err(
+        suites.IOOutSuite4()->AEGP_GetOutSpecOptionsHandle(outH, reinterpret_cast<void**>(&optionsH)));
+    GUARD_ERROR(optionsH != nullptr, A_Err_GENERIC);
+
+    FlatOutputOptions options;
+    GUARD_A_Err(aegif::GetDataFromMemH(basic_dataP->pica_basicP, optionsH, &options));
+
+    aegif::OptionsDialog optionsDialog(mainWindowHandle);
+    optionsDialog.SetLocale(aegif::GetAppLocale(basic_dataP->pica_basicP));
+    optionsDialog.SetLoopEnable(options.loop);
+    optionsDialog.SetFastEncodeEnable(options.fast);
+    optionsDialog.SetImageQuality(options.quality);
+
+    if (!optionsDialog.ShowModal())
+    {
+        AEGLOG_TRACE("dialog input discarded");
+        return A_Err_NONE;
+    }
+
+    AEGLOG_TRACE("dialog input accepted");
+
+    options.loop    = optionsDialog.GetLoopEnable();
+    options.fast    = optionsDialog.GetFastEncodeEnable();
+    options.quality = optionsDialog.GetImageQuality();
+    GUARD_A_Err(aegif::SetDataToMemH(basic_dataP->pica_basicP, optionsH, options));
+
+    AEGLOG_INFO("options has been changed");
+    AEGLOG_INFO("loop: {}", options.loop);
+    AEGLOG_INFO("fast: {}", options.fast);
+    AEGLOG_INFO("quality: {}", options.quality);
+
+    *user_interacted0 = TRUE;
+    return A_Err_NONE;
 }
 
 A_Err AEIO_StartAdding(AEIO_BasicData* basic_dataP, AEIO_OutSpecH outH, A_long flags)
@@ -225,9 +273,15 @@ A_Err AEIO_StartAdding(AEIO_BasicData* basic_dataP, AEIO_OutSpecH outH, A_long f
     aegif::GIFEncoder::Options encoderOptions;
     encoderOptions.width   = width;
     encoderOptions.height  = height;
-    encoderOptions.quality = outputOptions.quality;
-    encoderOptions.loopCnt = outputOptions.loopCnt;
+    encoderOptions.loop    = outputOptions.loop;
     encoderOptions.fast    = outputOptions.fast;
+    encoderOptions.quality = outputOptions.quality;
+    AEGLOG_INFO("encode options");
+    AEGLOG_INFO("width: {}", encoderOptions.width);
+    AEGLOG_INFO("height: {}", encoderOptions.height);
+    AEGLOG_INFO("loop: {}", encoderOptions.loop);
+    AEGLOG_INFO("fast: {}", encoderOptions.fast);
+    AEGLOG_INFO("quality: {}", encoderOptions.quality);
 
     std::unique_ptr<aegif::GIFEncoder> encoder(new aegif::GIFEncoder());
 
@@ -314,7 +368,7 @@ A_Err ConstructModuleInfo(AEGP_SuiteHandler& suites, AEIO_ModuleInfo* info)
     AEFX_CLR_STRUCT(*info);
 
     info->sig = 'qAEG';
-    strcpy(info->name, "Ae GIF");
+    strcpy(info->name, "AeGIF");
 
     info->flags = AEIO_MFlag_NONE;
     info->flags |= AEIO_MFlag_OUTPUT;

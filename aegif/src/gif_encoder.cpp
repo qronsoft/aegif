@@ -28,7 +28,7 @@ GIFEncoder::Error GIFEncoder::Init(Options options)
     gifskiSettings.width      = options.width;
     gifskiSettings.height     = options.height;
     gifskiSettings.quality    = options.quality;
-    gifskiSettings.loop_count = options.loopCnt;
+    gifskiSettings.loop_count = options.loop ? 0 : -1;
     gifskiSettings.fast       = options.fast;
 
     gifski_ = gifski_new(&gifskiSettings);

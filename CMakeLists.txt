@@ -24,6 +24,9 @@ if (MSVC)
         VC_EXTRALEAN
         # enable win32 strict
         STRICT
+        # minimum system requirement
+        WINVER=_WIN32_WINNT_VISTA
+        _WIN32_WINNT=_WIN32_WINNT_VISTA
     )
 
     add_compile_options(

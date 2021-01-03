@@ -8,7 +8,10 @@ template <class OnExit>
 class ScopeGuard
 {
 public:
-    ScopeGuard(OnExit&& onExit) : onExit_(std::move(onExit)) {}
+    ScopeGuard(OnExit&& onExit)
+        : onExit_(std::move(onExit))
+    {
+    }
     ~ScopeGuard() { onExit_(); }
 
 private:

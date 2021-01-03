@@ -15,9 +15,9 @@ public:
     {
         uint32_t width  = 0;
         uint32_t height = 0;
-        uint8_t quality = 100; /* 1 ~ 100 */
-        int16_t loopCnt = 0;
+        bool loop       = true;
         bool fast       = false;
+        uint8_t quality = 100; /* 1 ~ 100 */
     };
 
     GIFEncoder();
