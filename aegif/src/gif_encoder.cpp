@@ -2,12 +2,41 @@
 
 // std
 #include <algorithm>
+#include <future>
 
 // gifski
 #include <gifski.h>
 
 // aegif
 #include "log.hpp"
+
+namespace
+{
+template <class Fn>
+void ParallelFor(int loopCnt, Fn func)
+{
+    int coreCnt = std::max((int) std::thread::hardware_concurrency(), 1);
+    std::vector<std::future<void>> tasks(coreCnt);
+    for (int coreId = 0; coreId < coreCnt; ++coreId)
+    {
+        tasks[coreId] = std::async(
+            std::launch::async | std::launch::deferred,
+            [&](int id) {
+                const int begin = loopCnt / coreCnt * id + std::min(loopCnt % coreCnt, id);
+                const int end   = loopCnt / coreCnt * (id + 1) + std::min(loopCnt % coreCnt, id + 1);
+                for (int i = begin; i < end; ++i)
+                {
+                    func(i);
+                }
+            },
+            coreId);
+    }
+    for (auto&& task : tasks)
+    {
+        task.wait();
+    }
+}
+}
 
 namespace aegif
 {
@@ -103,11 +132,10 @@ void GIFEncoder::ConvertARGBToRGB(
     rgbPixelBuf_.resize(width * height * 3, 0);
     unsigned char* dstPixels = rgbPixelBuf_.data();
 
-    for (uint32_t y = 0; y < height; ++y)
-    {
+    ParallelFor(height, [&](int y) {
         const unsigned char* srcRow = srcPixels + y * bytesPerRow;
         unsigned char* dstRow       = dstPixels + y * width * 3;
-        for (uint32_t x = 0; x < width; ++x)
+        for (int x = 0; x < width; ++x)
         {
             const unsigned char* argb = srcRow + (x << 2);
             const auto a              = uint16_t(argb[0]);
@@ -119,6 +147,6 @@ void GIFEncoder::ConvertARGBToRGB(
             *(rgb + 1)                = unsigned char(g * a / 255);
             *(rgb + 2)                = unsigned char(b * a / 255);
         }
-    }
+    });
 }
 }
