@@ -1,4 +1,6 @@
-﻿resource 'PiPL' (16000) {
+﻿#include "version.hpp"
+
+resource 'PiPL' (16000) {
 {
         /* [1] */
         Kind {
@@ -14,7 +16,11 @@
         },
         /* [4] */
         Version {
-            0 * 524288 + 0 * 32768 + 1 * 2048 + 0 * 512 + 0
+            AEGIF_MAJOR_VERSION * 524288 +
+            AEGIF_MINOR_VERSION * 32768 +
+            AEGIF_BUG_VERSION   * 2048 +
+            AEGIF_STAGE_VERSION * 512 +
+            AEGIF_BUILD_VERSION
         },
         /* [5] */
         CodeWin64X86 {"EntryPointFunc"},

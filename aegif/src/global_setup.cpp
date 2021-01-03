@@ -4,6 +4,7 @@
 #include <AEGP_SuiteHandler.h>
 
 // aegif
+#include "version.hpp"
 #include "log.hpp"
 #include "error_guard.hpp"
 #include "aeio.hpp"
@@ -22,6 +23,14 @@ A_Err UnsafeGlobalSetup(
     aegif::SetupLog(pica_basicP);
 
     AEGLOG_BLOCK("GlobalSetup");
+
+    AEGLOG_INFO(
+        "plugin version: {}.{}.{}.{}.{}",
+        AEGIF_MAJOR_VERSION,
+        AEGIF_MINOR_VERSION,
+        AEGIF_BUG_VERSION,
+        AEGIF_STAGE_VERSION,
+        AEGIF_BUILD_VERSION);
 
     AEGP_SuiteHandler suites(pica_basicP);
 

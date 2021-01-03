@@ -25,6 +25,7 @@ SHARED
     src/options_dialog.cpp
     src/options_dialog.hpp
     src/scope_guard.hpp
+    src/version.hpp
 
     # ui
     src/ui/ui_options_dialog_base.cpp
@@ -35,6 +36,7 @@ if(WIN32)
 add_pipl_rc(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/aegif_pipl.rc
     SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/aegif_pipl.r
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/version.hpp
 )
 
 target_sources(aegif
