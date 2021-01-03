@@ -27,9 +27,12 @@ namespace
 {
 struct FlatOutputOptions
 {
+    uint8_t formatVersion = 1;
+    // v1
     bool loop       = true;
     bool fast       = false;
     uint8_t quality = 100; /* 1 ~ 100 */
+    // end v1
 };
 }
 

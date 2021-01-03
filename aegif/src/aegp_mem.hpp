@@ -25,6 +25,7 @@ A_Err GetDataFromMemH(const SPBasicSuite* pica_basicP, AEGP_MemHandle memH, T* d
     GUARD_A_Err(suites.MemorySuite1()->AEGP_GetMemHandleSize(memH, &memSize));
     if (memSize != sizeof(T))
     {
+        GUARD_A_Err(suites.MemorySuite1()->AEGP_UnlockMemHandle(memH));
         GUARD_A_Err(suites.MemorySuite1()->AEGP_ResizeMemHandle("resize mem handle", sizeof(T), memH));
     }
 
@@ -54,6 +55,7 @@ A_Err SetDataToMemH(const SPBasicSuite* pica_basicP, AEGP_MemHandle memH, T&& da
 
     if (memSize != sizeof(T))
     {
+        GUARD_A_Err(suites.MemorySuite1()->AEGP_UnlockMemHandle(memH));
         GUARD_A_Err(suites.MemorySuite1()->AEGP_ResizeMemHandle("resize mem handle", sizeof(T), memH));
     }
 
