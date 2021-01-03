@@ -2,6 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by options_dialog.rc
 //
+#define IDS_FAST_ENCODE_TOOLTIP         100
 #define IDD_OPTIONS_DIALOG              105
 #define IDC_CHECK_LOOP                  1002
 #define IDC_SLIDER_IMAGE_QUALITY        1010
@@ -21,7 +22,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        100
+#define _APS_NEXT_RESOURCE_VALUE        101
 #define _APS_NEXT_COMMAND_VALUE         100
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           300

@@ -195,10 +195,9 @@ void UIOptionsDialogWin::InitUI(HWND hwndDlg)
     SendDlgItemMessageW(hwndDlg, IDC_SLIDER_IMAGE_QUALITY, TBM_SETRANGEMAX, TRUE, IMAGE_QUALITY_MAX);
 
     // fast-encode-checkbox
-    CreateToolTip(
-        hwndDlg,
-        GetDlgItem(hwndDlg, IDC_CHECK_FAST_ENCODE),
-        L"3 times faster encoding, but 10% lower quality and bigger file");
+    wchar_t buf[128] = {};
+    LoadStringW(GetDllInstanceHandle(), IDS_FAST_ENCODE_TOOLTIP, buf, sizeof(buf) / sizeof(wchar_t));
+    CreateToolTip(hwndDlg, GetDlgItem(hwndDlg, IDC_CHECK_FAST_ENCODE), buf);
 
     /* update states */
     UpdateLoopCheckbox(hwndDlg);
