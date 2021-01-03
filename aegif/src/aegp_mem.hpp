@@ -15,7 +15,7 @@
 namespace aegif
 {
 template <class T>
-A_Err GetDataFromMemH(const SPBasicSuite* pica_basicP, AEGP_MemHandle memH, T* data)
+A_Err GetMemHData(const SPBasicSuite* pica_basicP, AEGP_MemHandle memH, T* data)
 {
     AEGP_SuiteHandler suites(pica_basicP);
 
@@ -44,7 +44,7 @@ A_Err GetDataFromMemH(const SPBasicSuite* pica_basicP, AEGP_MemHandle memH, T* d
 }
 
 template <class T>
-A_Err SetDataToMemH(const SPBasicSuite* pica_basicP, AEGP_MemHandle memH, T&& data)
+A_Err SetMemHData(const SPBasicSuite* pica_basicP, AEGP_MemHandle memH, T&& data)
 {
     AEGP_SuiteHandler suites(pica_basicP);
 
@@ -68,7 +68,7 @@ A_Err SetDataToMemH(const SPBasicSuite* pica_basicP, AEGP_MemHandle memH, T&& da
 }
 
 template <class Char>
-A_Err GetStringFromMemH(const SPBasicSuite* pica_basicP, AEGP_MemHandle memH, std::basic_string<Char>* s)
+A_Err GetMemHString(const SPBasicSuite* pica_basicP, AEGP_MemHandle memH, std::basic_string<Char>* s)
 {
     AEGP_SuiteHandler suites(pica_basicP);
 
