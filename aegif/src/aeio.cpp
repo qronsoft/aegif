@@ -203,6 +203,7 @@ A_Err AEIO_GetDepths(AEIO_BasicData* basic_dataP, AEIO_OutSpecH outH, AEIO_Suppo
 
 A_Err AEIO_DisposeOutputOptions(AEIO_BasicData* basic_dataP, void* optionsPV)
 {
+    AEGLOG_BLOCK("AEIO_DisposeOutputOptions");
     AEGP_SuiteHandler suites(basic_dataP->pica_basicP);
     if (auto optionsH = reinterpret_cast<AEIO_Handle>(optionsPV))
     {
@@ -337,7 +338,7 @@ A_Err AEIO_AddFrame(
     AEGLOG_BLOCK("AEIO_AddFrame");
     AEGLOG_INFO("frame: {}", frame_index);
 
-    GUARD_ERROR(PF_WORLD_IS_DEEP(wP) == 0, A_Err_GENERIC);
+    GUARD_ERROR(PF_WORLD_IS_DEEP(wP) == 0, AEIO_Err_BAD_BMWORLD);
 
     AEGP_SuiteHandler suites(basic_dataP->pica_basicP);
 
@@ -363,8 +364,6 @@ A_Err AEIO_AddFrame(
 A_Err AEIO_EndAdding(AEIO_BasicData* basic_dataP, AEIO_OutSpecH outH, A_long flags)
 {
     AEGLOG_BLOCK("AEIO_EndAdding");
-
-    AEGP_SuiteHandler suites(basic_dataP->pica_basicP);
 
     FlatOutputOptions options;
     GUARD_A_Err(GetOutSpecOptionsData(basic_dataP, outH, &options));
