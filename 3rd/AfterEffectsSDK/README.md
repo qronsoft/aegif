@@ -1,1 +1,3 @@
-Put 'Examples/' directory here
+- Put 'Examples/' directory here
+- SDK version: CC2015 Release1
+- Download [here](https://console.adobe.io/downloads/ae).

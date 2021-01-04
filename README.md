@@ -1,16 +1,9 @@
 # AeGIF - After Effects GIF Export plugin
-[![AGPL3](
-https://img.shields.io/badge/license-AGPL3-blue.svg?style=flat
-)](LICENSE)
-
 ## About
 - Provide the animated GIF output module available on After Effects render queue.
 - Use the gifski encoder to create the highest-quality video.
 
 ## Installation
-- Download the plugin file [Here](
-https://github.com/qronsoft/aegif/releases/download/v0.0.1/aegif.aex
-).
 - Put the plugin file in your After Effects Plug-ins folder.
   - e.g) `C:\Program Files\Adobe\Adobe After Effects 2020\Support Files\Plug-ins`
 
