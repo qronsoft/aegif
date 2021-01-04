@@ -3,6 +3,10 @@
 https://img.shields.io/badge/license-AGPL3-blue.svg?style=flat
 )](LICENSE)
 
+## About
+- Provide the animated GIF output module available on After Effects render queue.
+- Use the gifski encoder to create the highest-quality video.
+
 ## Installation
 - Download the plugin file [Here](
 https://github.com/qronsoft/aegif/releases/download/v0.0.1/aegif.aex
