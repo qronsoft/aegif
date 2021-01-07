@@ -36,7 +36,7 @@ if (MSVC)
         # deprecated register keyword warning
         /wd5033
         # multi processor compile
-        $<$<CXX_COMPILER_ID:MSVC>:/MP>
+        /MP
     )
 endif()
 
