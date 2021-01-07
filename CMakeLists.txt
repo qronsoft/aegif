@@ -6,9 +6,6 @@ enable_testing()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 17)
 
-# enable LTO on Release build
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
-
 # msvc global settings
 if (MSVC)
     add_compile_definitions(
@@ -42,6 +39,7 @@ endif()
 
 # 3rd party libs
 add_subdirectory(3rd/spdlog EXCLUDE_FROM_ALL)
+add_subdirectory(3rd/msgpack EXCLUDE_FROM_ALL)
 add_subdirectory(3rd/auxfiles/gifski EXCLUDE_FROM_ALL)
 add_subdirectory(3rd/auxfiles/AfterEffectsSDK EXCLUDE_FROM_ALL)
 

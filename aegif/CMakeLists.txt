@@ -22,6 +22,8 @@ SHARED
     src/locale.hpp
     src/log.cpp
     src/log.hpp
+    src/output_options.hpp
+    src/output_options.cpp
     src/options_dialog.cpp
     src/options_dialog.hpp
     src/scope_guard.hpp
@@ -67,6 +69,7 @@ PRIVATE
     $<$<CONFIG:Debug>:spdlog>
     $<$<CONFIG:RelWithDebInfo>:spdlog>
     libgifski
+    msgpackc-cxx
     AfterEffectsSDK
 )
 

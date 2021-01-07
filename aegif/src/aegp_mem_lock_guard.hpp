@@ -10,6 +10,7 @@ class AEGPMemLockGuard
 public:
     AEGPMemLockGuard(const SPBasicSuite* pica_basicP, AEGP_MemHandle memH);
     ~AEGPMemLockGuard();
+    A_Err Lock();
     A_Err Unlock();
     template <class T>
     T* Get()
@@ -21,13 +22,11 @@ public:
     {
         return reinterpret_cast<const T*>(dataPtr_);
     }
-    A_Err GetLockError() const { return lockError_; }
-    bool IsLocked() const { return GetLockError() == A_Err_NONE; }
+    bool IsLocked() const { return dataPtr_ != nullptr; }
 
 private:
     AEGP_SuiteHandler suites_;
     AEGP_MemHandle memH_;
     void* dataPtr_;
-    A_Err lockError_;
 };
 }
