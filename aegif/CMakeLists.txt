@@ -69,7 +69,7 @@ PRIVATE
     $<$<CONFIG:Debug>:spdlog>
     $<$<CONFIG:RelWithDebInfo>:spdlog>
     libgifski
-    msgpackc-cxx
+    mpack
     AfterEffectsSDK
 )
 

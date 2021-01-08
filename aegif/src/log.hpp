@@ -55,7 +55,7 @@ private:
 #define AEGLOG_WARN SPDLOG_WARN
 #define AEGLOG_ERROR SPDLOG_ERROR
 #define AEGLOG_CRITICAL SPDLOG_CRITICAL
-#define AEGLOG_BLOCK(...)                                                                                    \
+#define AEGLOG_BLOCK(...) \
     aegif::__Block __AEGLOG_BLOCK_NAME(spdlog::source_loc{ __FILE__, __LINE__, SPDLOG_FUNCTION }, __VA_ARGS__)
 #else
 #undef SPDLOG_TRACE

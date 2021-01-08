@@ -462,16 +462,16 @@ A_Err ConstructFunctionBlock(AEGP_SuiteHandler& suites, AEIO_FunctionBlock4* fun
 
     AEFX_CLR_STRUCT(*funcs);
 
-#define default_cb(callbackName)                                                                             \
-    [](auto...) -> A_Err {                                                                                   \
-        AEGLOG_DEBUG("default {} called", #callbackName);                                                    \
-        return AEIO_Err_USE_DFLT_CALLBACK;                                                                   \
+#define default_cb(callbackName)                          \
+    [](auto...) -> A_Err {                                \
+        AEGLOG_DEBUG("default {} called", #callbackName); \
+        return AEIO_Err_USE_DFLT_CALLBACK;                \
     }
 
-#define stub_cb(callbackName)                                                                                \
-    [](auto...) -> A_Err {                                                                                   \
-        AEGLOG_DEBUG("stub {} called", #callbackName);                                                       \
-        return A_Err_NONE;                                                                                   \
+#define stub_cb(callbackName)                          \
+    [](auto...) -> A_Err {                             \
+        AEGLOG_DEBUG("stub {} called", #callbackName); \
+        return A_Err_NONE;                             \
     }
 
     /* required */

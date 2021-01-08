@@ -4,9 +4,6 @@
 #include <cstdint>
 #include <vector>
 
-// msgpack
-#include <msgpack.hpp>
-
 namespace aegif
 {
 class GIFEncoder;
@@ -36,7 +33,6 @@ private:
     struct Data
     {
         /* data */
-        // dont change member name
         uint8_t version = 1;
         // v1
         bool loop         = true;
@@ -45,7 +41,12 @@ private:
         uint64_t encoderP = 0;
         // end v1
 
-        MSGPACK_DEFINE_MAP(version, loop, fast, quality, encoderP);
+        static constexpr uint8_t ID_version  = 0;
+        static constexpr uint8_t ID_loop     = 1;
+        static constexpr uint8_t ID_fast     = 2;
+        static constexpr uint8_t ID_quality  = 3;
+        static constexpr uint8_t ID_encoderP = 4;
+        static constexpr uint8_t COUNT       = 5;
     } data_;
 };
 }

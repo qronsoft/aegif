@@ -3,72 +3,52 @@
 // std
 #include <sstream>
 
-// msgpack
-#include <msgpack.hpp>
-#include <msgpack/type.hpp>
+// mpack
+#include <mpack.h>
 
 // aegif
 #include "log.hpp"
+#include "scope_guard.hpp"
 
 namespace aegif
 {
 OutputOptions::OutputOptions() = default;
 
-bool OutputOptions::Load(const char* bytes, size_t size) try
+bool OutputOptions::Load(const char* bytes, size_t size)
 {
     Data newData;
 
-    auto oh         = msgpack::unpack(bytes, size);
-    const auto& obj = oh.get();
+    mpack_tree_t tree;
+    mpack_tree_init_data(&tree, bytes, size);
+    mpack_tree_parse(&tree);
+    auto root = mpack_tree_root(&tree);
 
-    if (obj.type != msgpack::type::MAP)
+#define load_msgpack_data(name, type)                                  \
+    do                                                                 \
+    {                                                                  \
+        auto entry       = mpack_node_map_uint(root, Data::ID_##name); \
+        const auto value = mpack_node_##type(entry);                   \
+        if (mpack_node_error(entry) == mpack_ok)                       \
+        {                                                              \
+            newData.name = static_cast<decltype(newData.name)>(value); \
+        }                                                              \
+    } while (0);
+
+    load_msgpack_data(version, u8);
+    load_msgpack_data(loop, bool);
+    load_msgpack_data(fast, bool);
+    load_msgpack_data(quality, u8);
+    load_msgpack_data(encoderP, u64);
+
+    if (mpack_tree_destroy(&tree) != mpack_ok)
     {
-        AEGLOG_ERROR("invalid serialized data");
+        AEGLOG_ERROR("failed to load output options");
         return false;
     }
 
-    for (uint32_t i = 0, size = obj.via.map.size; i < size; ++i)
-    {
-        const auto kv = obj.via.map.ptr + i;
-        if (kv->key.type != msgpack::type::STR)
-        {
-            AEGLOG_WARN("non string key found");
-            continue;
-        }
-
-        const auto key = kv->key.as<std::string>();
-        if (key == "version")
-        {
-            newData.version = kv->val.as<decltype(Data::version)>();
-        }
-        else if (key == "loop")
-        {
-            newData.loop = kv->val.as<decltype(Data::loop)>();
-        }
-        else if (key == "fast")
-        {
-            newData.fast = kv->val.as<decltype(Data::fast)>();
-        }
-        else if (key == "quality")
-        {
-            newData.quality = kv->val.as<decltype(Data::quality)>();
-        }
-        else if (key == "encoderP")
-        {
-            newData.encoderP = kv->val.as<decltype(Data::encoderP)>();
-        }
-        else
-        {
-            AEGLOG_WARN("unexpected key found: {}", key);
-        }
-    }
     data_ = newData;
+
     return true;
-}
-catch (...)
-{
-    AEGLOG_ERROR("failed to load output options");
-    return false;
 }
 
 bool OutputOptions::Load(const std::vector<char>& bytes)
@@ -76,19 +56,41 @@ bool OutputOptions::Load(const std::vector<char>& bytes)
     return Load(bytes.data(), bytes.size());
 }
 
-bool OutputOptions::Serialize(std::vector<char>* bytes) const try
+bool OutputOptions::Serialize(std::vector<char>* bytes) const
 {
     if (bytes == nullptr) return false;
+    bytes->clear();
 
-    std::stringstream ss;
-    msgpack::pack(&ss, data_);
-    const auto str = ss.str();
-    bytes->assign(str.begin(), str.end());
+    char* ptr   = nullptr;
+    size_t size = 0;
+
+    ScopeGuard freeMem([&]() { free(ptr); });
+
+    mpack_writer_t writer;
+    mpack_writer_init_growable(&writer, &ptr, &size);
+
+#define store_msgpack_data(name, type)            \
+    do                                            \
+    {                                             \
+        mpack_write_u8(&writer, Data::ID_##name); \
+        mpack_write_##type(&writer, data_.name);  \
+    } while (0);
+
+    mpack_start_map(&writer, Data::COUNT);
+    store_msgpack_data(version, u8);
+    store_msgpack_data(loop, bool);
+    store_msgpack_data(fast, bool);
+    store_msgpack_data(quality, u8);
+    store_msgpack_data(encoderP, u64);
+    mpack_finish_map(&writer);
+
+    if (mpack_writer_destroy(&writer) != mpack_ok)
+    {
+        AEGLOG_ERROR("failed to serialize output options");
+        return false;
+    }
+
+    bytes->assign(ptr, ptr + size);
     return true;
-}
-catch (...)
-{
-    AEGLOG_CRITICAL("failed to serialize output options");
-    return false;
 }
 }

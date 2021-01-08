@@ -4,6 +4,6 @@
 [submodule "3rd/gifski"]
 	path = 3rd/gifski
 	url = https://github.com/sindresorhus/Gifski/
-[submodule "3rd/msgpack"]
-	path = 3rd/msgpack
-	url = https://github.com/msgpack/msgpack-c
+[submodule "3rd/mpack"]
+	path = 3rd/mpack
+	url = https://github.com/ludocode/mpack
