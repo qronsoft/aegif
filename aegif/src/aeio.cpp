@@ -4,6 +4,11 @@
 #include <memory>
 #include <cstdint>
 
+// win32
+#ifdef WIN32
+#include <Windows.h>
+#endif
+
 // AE
 #include <AE_Macros.h>
 
@@ -29,6 +34,34 @@ A_Err ReportError(AEIO_BasicData* basic_dataP, const A_char* msg, A_Err err)
     AEGLOG_ERROR(msg);
     basic_dataP->msg_func(err, msg);
     return err;
+}
+
+A_Err GetUserOptionsParentWindow(const SPBasicSuite* pica_basicP, void** winH)
+{
+    GUARD_ERROR(winH != nullptr, A_Err_GENERIC);
+    *winH = nullptr;
+
+    AEGP_SuiteHandler suites(pica_basicP);
+
+    void* mainWinH = nullptr;
+    GUARD_A_Err(suites.UtilitySuite3()->AEGP_GetMainHWND(&mainWinH));
+
+#ifdef WIN32
+    auto foregroundWinH = GetForegroundWindow();
+    if (GetAncestor(foregroundWinH, GA_ROOTOWNER) == mainWinH)
+    {
+        *winH = foregroundWinH;
+        return A_Err_NONE;
+    }
+#endif
+
+    /* fallback */
+    // when the dialog is open,
+    // manipulating the Output Module Settings window causes a fatal error.
+
+    AEGLOG_WARN("failed to get foreground window handle");
+    *winH = mainWinH;
+    return A_Err_NONE;
 }
 
 A_Err GetMemHOptionsData(
@@ -255,25 +288,16 @@ A_Err AEIO_UserOptionsDialog(
     AEGLOG_BLOCK("AEIO_UserOptionsDialog");
     *user_interacted0 = FALSE;
 
-    static bool s_isOptionsDialogOpened = false;
-    if (s_isOptionsDialogOpened)
-    {
-        AEGLOG_TRACE("options dialog is now already open");
-        return A_Err_NONE;
-    }
-    aegif::ScopeGuard onExit([]() { s_isOptionsDialogOpened = false; });
-    s_isOptionsDialogOpened = true;
-
     AEGP_SuiteHandler suites(basic_dataP->pica_basicP);
-
-    void* mainWindowHandle = nullptr;
-    GUARD_A_Err(suites.UtilitySuite3()->AEGP_GetMainHWND(&mainWindowHandle));
 
     std::unique_ptr<aegif::OutputOptions> options;
     GUARD_A_Err(GetOutSpecOptionsData(basic_dataP->pica_basicP, outH, &options));
     GUARD_ERROR(options != nullptr, A_Err_STRUCT);
 
-    aegif::OptionsDialog optionsDialog(mainWindowHandle);
+    void* dialogParentWinH = nullptr;
+    GUARD_A_Err(GetUserOptionsParentWindow(basic_dataP->pica_basicP, &dialogParentWinH));
+
+    aegif::OptionsDialog optionsDialog(dialogParentWinH);
     optionsDialog.SetLocale(aegif::GetAppLocale(basic_dataP->pica_basicP));
     optionsDialog.SetLoopEnable(options->loop());
     optionsDialog.SetFastEncodeEnable(options->fast());
