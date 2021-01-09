@@ -4,7 +4,7 @@
 #define AEGIF_MINOR_VERSION 0 /* 0-15 */
 #define AEGIF_BUG_VERSION 1   /* 0-15 */
 #define AEGIF_STAGE_VERSION 3 /* develop: 0, alpha: 1, beta: 2, rc: 3 */
-#define AEGIF_BUILD_VERSION 0 /* 0-511 */
+#define AEGIF_BUILD_VERSION 1 /* 0-511 */
 
 #define _AEGIF_VERSION_STR2(x) #x
 #define _AEGIF_VERSION_STR(x) _AEGIF_VERSION_STR2(x)
