@@ -11,6 +11,7 @@
 #include "../dll_hinstance.hpp"
 #include "../log.hpp"
 #include "../scope_guard.hpp"
+#include "../version.hpp"
 
 namespace
 {
@@ -189,6 +190,9 @@ INT_PTR UIOptionsDialogWin::DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, L
 }
 void UIOptionsDialogWin::InitUI(HWND hwndDlg)
 {
+    /* title bar*/
+    SetWindowTextA(hwndDlg, "AeGIF " AEGIF_SEM_VERSION);
+
     /* config */
     // image-quality-slider
     SendDlgItemMessageW(hwndDlg, IDC_SLIDER_IMAGE_QUALITY, TBM_SETRANGEMIN, FALSE, IMAGE_QUALITY_MIN);
