@@ -1,4 +1,4 @@
-﻿#include "output_options.hpp"
+﻿#include "output_options_v1.hpp"
 
 // std
 #include <algorithm>
@@ -12,9 +12,11 @@
 
 namespace aegif
 {
-OutputOptions::OutputOptions() = default;
+namespace frozen
+{
+OutputOptionsV1::OutputOptionsV1() = default;
 
-bool OutputOptions::Deserialize(const char* bytes, size_t size)
+bool OutputOptionsV1::Deserialize(const char* bytes, size_t size)
 {
     if (bytes == nullptr) return false;
 
@@ -59,12 +61,12 @@ bool OutputOptions::Deserialize(const char* bytes, size_t size)
     return true;
 }
 
-bool OutputOptions::Deserialize(const std::vector<char>& bytes)
+bool OutputOptionsV1::Deserialize(const std::vector<char>& bytes)
 {
     return Deserialize(bytes.data(), bytes.size());
 }
 
-bool OutputOptions::Serialize(std::vector<char>* bytes) const
+bool OutputOptionsV1::Serialize(std::vector<char>* bytes) const
 {
     if (bytes == nullptr) return false;
     bytes->clear();
@@ -102,12 +104,12 @@ bool OutputOptions::Serialize(std::vector<char>* bytes) const
     bytes->assign(ptr, ptr + size);
     return true;
 }
-void OutputOptions::quality(uint8_t x)
+void OutputOptionsV1::quality(uint8_t x)
 {
     data_.quality = std::clamp(x, QUALITY_MIN, QUALITY_MAX);
 }
 
-bool OutputOptions::operator==(const OutputOptions& other) const
+bool OutputOptionsV1::operator==(const OutputOptionsV1& other) const
 {
     if (version() != other.version()) return false;
     if (loop() != other.loop()) return false;
@@ -116,8 +118,9 @@ bool OutputOptions::operator==(const OutputOptions& other) const
     if (encoderP() != other.encoderP()) return false;
     return true;
 }
-bool OutputOptions::operator!=(const OutputOptions& other) const
+bool OutputOptionsV1::operator!=(const OutputOptionsV1& other) const
 {
     return !(*this == other);
+}
 }
 }

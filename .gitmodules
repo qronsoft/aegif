@@ -7,3 +7,6 @@
 [submodule "3rd/mpack"]
 	path = 3rd/mpack
 	url = https://github.com/ludocode/mpack
+[submodule "3rd/googletest"]
+	path = 3rd/googletest
+	url = https://github.com/google/googletest.git

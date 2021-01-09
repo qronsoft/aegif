@@ -42,7 +42,7 @@ A_Err GetMemHOptionsData(
     GUARD_A_Err(aegif::GetMemHData(pica_basicP, memH, &serialized));
 
     std::unique_ptr<aegif::OutputOptions> opt = std::make_unique<aegif::OutputOptions>();
-    if (opt->Load(serialized))
+    if (opt->Deserialize(serialized))
     {
         *options = std::move(opt);
     }

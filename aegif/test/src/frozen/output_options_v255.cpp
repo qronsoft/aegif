@@ -1,4 +1,4 @@
-﻿#include "output_options.hpp"
+﻿#include "output_options_v255.hpp"
 
 // std
 #include <algorithm>
@@ -12,9 +12,11 @@
 
 namespace aegif
 {
-OutputOptions::OutputOptions() = default;
+namespace frozen
+{
+OutputOptionsV255::OutputOptionsV255() = default;
 
-bool OutputOptions::Deserialize(const char* bytes, size_t size)
+bool OutputOptionsV255::Deserialize(const char* bytes, size_t size)
 {
     if (bytes == nullptr) return false;
 
@@ -41,9 +43,11 @@ bool OutputOptions::Deserialize(const char* bytes, size_t size)
 
     load_msgpack_data(version, uint);
     load_msgpack_data(loop, bool);
-    load_msgpack_data(fast, bool);
+    // load_msgpack_data(fast, bool);
     load_msgpack_data(quality, uint);
     load_msgpack_data(encoderP, uint);
+    load_msgpack_data(foo_s, str);
+    load_msgpack_data(foo_u32, uint);
 
     if (mpack_tree_destroy(&tree) != mpack_ok)
     {
@@ -59,12 +63,12 @@ bool OutputOptions::Deserialize(const char* bytes, size_t size)
     return true;
 }
 
-bool OutputOptions::Deserialize(const std::vector<char>& bytes)
+bool OutputOptionsV255::Deserialize(const std::vector<char>& bytes)
 {
     return Deserialize(bytes.data(), bytes.size());
 }
 
-bool OutputOptions::Serialize(std::vector<char>* bytes) const
+bool OutputOptionsV255::Serialize(std::vector<char>* bytes) const
 {
     if (bytes == nullptr) return false;
     bytes->clear();
@@ -87,9 +91,15 @@ bool OutputOptions::Serialize(std::vector<char>* bytes) const
     mpack_start_map(&writer, Data::COUNT);
     store_msgpack_data(version, u8);
     store_msgpack_data(loop, bool);
-    store_msgpack_data(fast, bool);
+    // store_msgpack_data(fast, bool);
     store_msgpack_data(quality, u8);
     store_msgpack_data(encoderP, u64);
+
+    mpack_write_u8(&writer, Data::ID_foo_s);
+    mpack_write_cstr(&writer, data_.foo_s.c_str());
+
+    mpack_write_u8(&writer, Data::ID_foo_u32);
+    mpack_write_u32(&writer, data_.foo_u32);
 
     mpack_finish_map(&writer);
 
@@ -102,22 +112,25 @@ bool OutputOptions::Serialize(std::vector<char>* bytes) const
     bytes->assign(ptr, ptr + size);
     return true;
 }
-void OutputOptions::quality(uint8_t x)
+void OutputOptionsV255::quality(uint8_t x)
 {
     data_.quality = std::clamp(x, QUALITY_MIN, QUALITY_MAX);
 }
 
-bool OutputOptions::operator==(const OutputOptions& other) const
+bool OutputOptionsV255::operator==(const OutputOptionsV255& other) const
 {
     if (version() != other.version()) return false;
     if (loop() != other.loop()) return false;
-    if (fast() != other.fast()) return false;
+    // if (fast() != other.fast()) return false;
     if (quality() != other.quality()) return false;
     if (encoderP() != other.encoderP()) return false;
+    if (data_.foo_u32 != other.data_.foo_u32) return false;
+    if (data_.foo_s != other.data_.foo_s) return false;
     return true;
 }
-bool OutputOptions::operator!=(const OutputOptions& other) const
+bool OutputOptionsV255::operator!=(const OutputOptionsV255& other) const
 {
     return !(*this == other);
+}
 }
 }

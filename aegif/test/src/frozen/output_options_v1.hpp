@@ -11,10 +11,12 @@ class GIFEncoder;
 
 namespace aegif
 {
-class OutputOptions
+namespace frozen
+{
+class OutputOptionsV1
 {
 public:
-    OutputOptions();
+    OutputOptionsV1();
     bool Deserialize(const char* bytes, size_t size);
     bool Deserialize(const std::vector<char>& bytes);
     bool Serialize(std::vector<char>* bytes) const;
@@ -29,8 +31,8 @@ public:
     GIFEncoder* encoderP() const { return (GIFEncoder*) (data_.encoderP); }
     void encoderP(GIFEncoder* x) { data_.encoderP = uint64_t(x); }
 
-    bool operator==(const OutputOptions& other) const;
-    bool operator!=(const OutputOptions& other) const;
+    bool operator==(const OutputOptionsV1& other) const;
+    bool operator!=(const OutputOptionsV1& other) const;
 
     static constexpr uint8_t QUALITY_MIN = 1;
     static constexpr uint8_t QUALITY_MAX = 100;
@@ -40,7 +42,6 @@ public:
 private:
     struct Data
     {
-        static constexpr uint8_t CURRENT_VERSION = 1;
         /* data */
         uint8_t version = CURRENT_VERSION;
         // v1
@@ -58,4 +59,5 @@ private:
         static constexpr uint8_t COUNT       = 5;
     } data_;
 };
+}
 }

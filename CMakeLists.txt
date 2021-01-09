@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.17)
-project(aegif)
+project(AeGIF)
 
 # global settings
 enable_testing()
@@ -39,6 +39,7 @@ endif()
 
 # 3rd party libs
 add_subdirectory(3rd/spdlog EXCLUDE_FROM_ALL)
+add_subdirectory(3rd/googletest EXCLUDE_FROM_ALL)
 add_subdirectory(3rd/auxfiles/mpack EXCLUDE_FROM_ALL)
 add_subdirectory(3rd/auxfiles/gifski EXCLUDE_FROM_ALL)
 add_subdirectory(3rd/auxfiles/AfterEffectsSDK EXCLUDE_FROM_ALL)

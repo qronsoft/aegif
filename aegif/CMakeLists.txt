@@ -93,3 +93,5 @@ POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_BINARY_DIR}/Plug-ins/"
     COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:aegif>" "${PROJECT_BINARY_DIR}/Plug-ins/"
 )
+
+add_subdirectory(test)
