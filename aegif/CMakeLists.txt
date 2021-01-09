@@ -85,6 +85,7 @@ PRIVATE
 set_target_properties(aegif
 PROPERTIES
     SUFFIX ".aex"
+    INTERPROCEDURAL_OPTIMIZATION_RELEASE True
 )
 
 # note: create shortcut to ${PROJECT_BINARY_DIR}/Plug-ins/ in your plugin directory
