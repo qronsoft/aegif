@@ -42,34 +42,29 @@ A_Err GetMemHOptionsData(
     GUARD_A_Err(aegif::GetMemHData(pica_basicP, memH, &serialized));
 
     std::unique_ptr<aegif::OutputOptions> opt = std::make_unique<aegif::OutputOptions>();
-    if (opt->Deserialize(serialized))
-    {
-        *options = std::move(opt);
-    }
-    else
+    if (!opt->Deserialize(serialized))
     {
         AEGLOG_WARN("invalid options binary: {:X}", spdlog::to_hex(serialized));
+        return A_Err_NONE;
     }
 
+    *options = std::move(opt);
     return A_Err_NONE;
 }
 
 A_Err SetMemHOptionsData(
     const SPBasicSuite* pica_basicP, AEGP_MemHandle memH, const aegif::OutputOptions& options)
 {
-    if (memH == nullptr) return A_Err_NONE;
+    GUARD_ERROR(memH != nullptr, A_Err_GENERIC);
 
     std::vector<char> serialized;
-    if (options.Serialize(&serialized))
-    {
-        GUARD_A_Err(aegif::SetMemHData(pica_basicP, memH, serialized));
-    }
-    else
+    if (!options.Serialize(&serialized))
     {
         AEGLOG_ERROR("failed to serialized options data");
         return A_Err_GENERIC;
     }
 
+    GUARD_A_Err(aegif::SetMemHData(pica_basicP, memH, serialized));
     return A_Err_NONE;
 }
 
@@ -79,7 +74,13 @@ A_Err GetOutSpecOptionsData(
     GUARD_ERROR(options != nullptr, A_Err_GENERIC);
     options->reset();
 
+    if (outH == nullptr)
+    {
+        return A_Err_NONE;
+    }
+
     AEGP_SuiteHandler suites(pica_basicP);
+
     AEIO_Handle optionsH = nullptr;
     GUARD_A_Err(
         suites.IOOutSuite4()->AEGP_GetOutSpecOptionsHandle(outH, reinterpret_cast<void**>(&optionsH)));
@@ -89,8 +90,12 @@ A_Err GetOutSpecOptionsData(
 
 A_Err UpdateOutSpecOptionsData(
     const SPBasicSuite* pica_basicP, AEIO_OutSpecH outH, const aegif::OutputOptions& options)
+
 {
+    GUARD_ERROR(outH != nullptr, A_Err_GENERIC);
+
     AEGP_SuiteHandler suites(pica_basicP);
+
     AEIO_Handle optionsH = nullptr;
     GUARD_A_Err(
         suites.IOOutSuite4()->AEGP_GetOutSpecOptionsHandle(outH, reinterpret_cast<void**>(&optionsH)));

@@ -27,10 +27,7 @@ A_Err GetMemHData(const SPBasicSuite* pica_basicP, AEGP_MemHandle memH, std::vec
 }
 A_Err SetMemHData(const SPBasicSuite* pica_basicP, AEGP_MemHandle memH, const std::vector<char>& data)
 {
-    if (memH == nullptr)
-    {
-        return A_Err_NONE;
-    }
+    GUARD_ERROR(memH != nullptr, A_Err_GENERIC);
 
     AEGP_SuiteHandler suites(pica_basicP);
 
