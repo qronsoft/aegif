@@ -4,3 +4,4 @@
 .vs/
 .vscode/
 /build
+/dist/*.aex
