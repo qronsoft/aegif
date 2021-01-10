@@ -1,4 +1,7 @@
 # AeGIF - After Effects GIF Export plugin
+
+[Download (Windows)](https://github.com/qronsoft/aegif/releases/download/v0.0.1/aegif-win.zip)
+
 ## About
 - Provide the animated GIF output module available on After Effects render queue.
 - Use the gifski encoder to create the highest-quality video.
