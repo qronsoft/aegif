@@ -32,11 +32,17 @@ A_Err GetMemHString(const SPBasicSuite* pica_basicP, AEGP_MemHandle memH, std::b
 
     AEGP_MemSize memSize = 0;
     GUARD_A_Err(suites.MemorySuite1()->AEGP_GetMemHandleSize(memH, &memSize));
+    memSize = sizeof(Char) * (memSize / sizeof(Char));
+
+    if (memSize == 0)
+    {
+        return A_Err_NONE;
+    }
 
     aegif::AEGPMemLockGuard lock(pica_basicP, memH);
     GUARD_A_Err(lock.Lock());
     GUARD_ERROR(lock.IsLocked(), A_Err_GENERIC);
-    s->assign(lock.Get<Char>(), lock.Get<Char>() + memSize / sizeof(Char));
+    s->assign(lock.Get<Char>(), lock.Get<Char>() + memSize / sizeof(Char) - 1);
     GUARD_A_Err(lock.Unlock());
     return A_Err_NONE;
 }
