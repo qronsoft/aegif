@@ -4,7 +4,8 @@ set(GIFSKI_RELEASE ${GIFSKI_BUILD_DIR}/release/gifski.lib)
 
 add_custom_command(
     OUTPUT ${GIFSKI_RELEASE}
-    COMMAND cargo build --release -q --target-dir ${GIFSKI_BUILD_DIR}
+    COMMAND cargo rustc --lib --release --target-dir ${GIFSKI_BUILD_DIR} -- -C target-feature=+crt-static
+
     WORKING_DIRECTORY ${GIFSKI_ROOT_DIR}
 )
 
